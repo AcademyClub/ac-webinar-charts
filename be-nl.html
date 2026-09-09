@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<title>Groeicurve BE-NL</title>
+<style>
+  body { margin: 0; padding: 16px; font-family: -apple-system, Segoe UI, Roboto, sans-serif; background: #fcfcfb; }
+  #legend { display: flex; flex-wrap: wrap; gap: 10px 16px; margin-top: 12px; font-size: 12px; color: #52514e; }
+  #legend span { display: flex; align-items: center; gap: 5px; cursor: pointer; user-select: none; }
+  #legend .sw { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+  h2 { font-size: 15px; font-weight: 500; color: #0b0b0b; margin: 0 0 12px; }
+</style>
+</head>
+<body>
+<h2>Groeicurve per webinar — BE-NL</h2>
+<div style="position: relative; width: 100%; height: 420px;">
+  <canvas id="chart" role="img" aria-label="Lijngrafiek groeicurve inschrijvingen per webinar, BE-NL"></canvas>
+</div>
+<div id="legend"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const labels = ["25 aug", "26 aug", "28 aug", "29 aug", "30 aug", "31 aug", "1 sep", "2 sep", "3 sep", "4 sep", "5 sep", "6 sep", "7 sep", "8 sep", "9 sep"];
+const seriesData = {"Datagedreven, accuraat en persoonlijk advies voor jouw ondernemer": [135, 167, 194, 195, 196, 213, 220, 228, 230, 230, 230, 231, 233, 234, 238], "De eenvoudigste manieren om facturatie en financi\u00ebn te regelen voor ondernemers en zelfstandigen": [122, 151, 160, 160, 160, 182, 187, 197, 240, 252, 254, 256, 266, 272, 288], "De optimale pre-accounting flow van kassa en factuur tot (automatische) boeking": [126, 151, 159, 159, 159, 182, 188, 196, 198, 198, 198, 199, 200, 200, 203], "Hoe kennis en data dankzij AI leiden tot meer waarde en minder werk": [136, 164, 173, 173, 173, 196, 201, 209, 211, 211, 211, 212, 213, 213, 216], "Maak het gemakkelijk met de juiste oplossing voor de juiste ondernemer": [123, 151, 159, 159, 160, 180, 186, 193, 195, 195, 195, 196, 197, 197, 200], "Meer overzicht, minder stress: kantoorbeheer en KYC in de praktijk": [128, 157, 165, 165, 165, 184, 190, 198, 200, 200, 200, 201, 202, 202, 205], "Optimaal fiscaal adviseren bij een veranderende wetgeving": [131, 157, 165, 165, 166, 190, 195, 203, 205, 205, 205, 206, 207, 207, 210], "Optimaliseer facturatie en diensten voor meer en snellere inkomsten": [127, 156, 165, 165, 165, 186, 192, 201, 203, 203, 203, 204, 205, 206, 210], "Post-accounting voor effici\u00ebnte rapportering, analyse, optimalisatie en benchmarks": [127, 152, 160, 160, 161, 184, 189, 198, 200, 200, 200, 201, 202, 202, 205], "Slimme boekhoud keuzes voor een sterke automatisering": [128, 158, 167, 167, 167, 187, 193, 201, 203, 203, 203, 204, 205, 205, 208], "Toegang tot alle informatie: zo win je met data en AI": [159, 194, 208, 208, 210, 288, 310, 330, 330, 330, null, null, null, null, null], "Van centraal beheer tot slimme koppelingen voor meer productiviteit, tijd en profijt": [132, 164, 172, 172, 172, 193, 198, 206, 208, 208, 208, 209, 210, 211, 214]};
+const palette = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4", "#008300", "#6250d6", "#e34948"];
+
+const datasets = Object.keys(seriesData).map((title, i) => ({
+  label: title,
+  data: seriesData[title],
+  borderColor: palette[i % palette.length],
+  backgroundColor: "transparent",
+  borderWidth: 2,
+  pointRadius: 2,
+  pointHoverRadius: 5,
+  spanGaps: false,
+  tension: 0.15,
+}));
+
+const chart = new Chart(document.getElementById('chart'), {
+  type: 'line',
+  data: { labels, datasets },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    interaction: { mode: 'nearest', intersect: false },
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: (item) => item.dataset.label + ': ' + (item.parsed.y ?? '—')
+        }
+      }
+    },
+    scales: {
+      x: { grid: { display: false }, ticks: { color: '#898781', font: { size: 11 } } },
+      y: { grid: { color: '#e1e0d9' }, ticks: { color: '#898781', font: { size: 11 } } }
+    }
+  }
+});
+
+const legendEl = document.getElementById('legend');
+datasets.forEach((ds, i) => {
+  const item = document.createElement('span');
+  item.innerHTML = `<span class="sw" style="background:${ds.borderColor}"></span>${ds.label}`;
+  item.onclick = () => {
+    const meta = chart.getDatasetMeta(i);
+    meta.hidden = !meta.hidden;
+    item.style.opacity = meta.hidden ? '0.35' : '1';
+    chart.update();
+  };
+  legendEl.appendChild(item);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<title>Groeicurve BE-FR</title>
+<style>
+  body { margin: 0; padding: 16px; font-family: -apple-system, Segoe UI, Roboto, sans-serif; background: #fcfcfb; }
+  #legend { display: flex; flex-wrap: wrap; gap: 10px 16px; margin-top: 12px; font-size: 12px; color: #52514e; }
+  #legend span { display: flex; align-items: center; gap: 5px; cursor: pointer; user-select: none; }
+  #legend .sw { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+  h2 { font-size: 15px; font-weight: 500; color: #0b0b0b; margin: 0 0 12px; }
+</style>
+</head>
+<body>
+<h2>Groeicurve per webinar — BE-FR</h2>
+<div style="position: relative; width: 100%; height: 420px;">
+  <canvas id="chart" role="img" aria-label="Lijngrafiek groeicurve inschrijvingen per webinar, BE-FR"></canvas>
+</div>
+<div id="legend"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const labels = ["25 aug", "26 aug", "28 aug", "29 aug", "30 aug", "31 aug", "1 sep", "2 sep", "3 sep", "4 sep", "5 sep", "6 sep", "7 sep", "8 sep", "9 sep"];
+const seriesData = {"Comment l'IA g\u00e9n\u00e8re d\u00e9j\u00e0 des r\u00e9sultats gr\u00e2ce \u00e0 la collaboration et \u00e0 l'ouverture": [60, 75, 85, 86, 86, 90, 94, 99, 108, 111, 113, 114, 158, 180, 188], "Conseiller fiscalement au mieux face \u00e0 une l\u00e9gislation en constante \u00e9volution": [59, 74, 84, 84, 84, 86, 90, 95, 102, 105, 106, 107, 107, 108, 109], "L'avenir de la comptabilit\u00e9 : nouvelles possibilit\u00e9s et nouvelles tendances": [61, 75, 83, 83, 83, 86, 90, 94, 100, 103, 104, 105, 106, 106, 107], "La meilleure mani\u00e8re de simplifier l'administration des entrepreneurs et d'all\u00e9ger votre travail": [60, 75, 83, 83, 83, 86, 90, 94, 100, 103, 104, 105, 106, 107, 108], "Le flux optimal de pr\u00e9-comptabilit\u00e9, de la facture \u00e0 l'\u00e9criture (semi-)automatique": [62, 77, 86, 86, 86, 88, 92, 94, 102, 105, 106, 107, 107, 108, 109], "Nouveaux outils, techniques de r\u00e9mun\u00e9ration et revenus": [56, 71, 80, 80, 80, 82, 86, 89, 95, 98, 99, 100, 100, 100, 101], "Plus de visibilit\u00e9, moins de stress : gestion du cabinet et automatisation en pratique": [67, 86, 97, 96, 97, 131, 147, 161, 171, 171, null, null, null, null, null], "Post-comptabilit\u00e9 : reporting, analyse et optimisation fiscale efficaces": [60, 77, 87, 87, 87, 89, 93, 97, 103, 106, 107, 108, 108, 108, 109]};
+const palette = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4", "#008300", "#6250d6", "#e34948"];
+
+const datasets = Object.keys(seriesData).map((title, i) => ({
+  label: title,
+  data: seriesData[title],
+  borderColor: palette[i % palette.length],
+  backgroundColor: "transparent",
+  borderWidth: 2,
+  pointRadius: 2,
+  pointHoverRadius: 5,
+  spanGaps: false,
+  tension: 0.15,
+}));
+
+const chart = new Chart(document.getElementById('chart'), {
+  type: 'line',
+  data: { labels, datasets },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    interaction: { mode: 'nearest', intersect: false },
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: (item) => item.dataset.label + ': ' + (item.parsed.y ?? '—')
+        }
+      }
+    },
+    scales: {
+      x: { grid: { display: false }, ticks: { color: '#898781', font: { size: 11 } } },
+      y: { grid: { color: '#e1e0d9' }, ticks: { color: '#898781', font: { size: 11 } } }
+    }
+  }
+});
+
+const legendEl = document.getElementById('legend');
+datasets.forEach((ds, i) => {
+  const item = document.createElement('span');
+  item.innerHTML = `<span class="sw" style="background:${ds.borderColor}"></span>${ds.label}`;
+  item.onclick = () => {
+    const meta = chart.getDatasetMeta(i);
+    meta.hidden = !meta.hidden;
+    item.style.opacity = meta.hidden ? '0.35' : '1';
+    chart.update();
+  };
+  legendEl.appendChild(item);
+});
+</script>
+</body>
+</html>
